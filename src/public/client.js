@@ -2,7 +2,7 @@ let store = {
     user: { name: "Katrina" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-    selectedRover: '',
+    selectedRover: 'Curiosity',
 }
 //const roverNames = store.rovers
 
@@ -11,6 +11,8 @@ const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
+    console.log('test update store')
+    console.log(store)
     render(root, store)
 }
 
@@ -22,7 +24,7 @@ const render = async (root, state) => {
 // create content
 const App = (state) => {
     let { rovers, apod } = state
-
+console.log(rovers);
     return `
         <header></header>
         <main>
@@ -32,6 +34,7 @@ const App = (state) => {
                 <h3>Choose a rover below:</h3>
                 ${roverBtns(rovers)}
             <section id="showRover">
+            
             </section>
         </main>
         <footer></footer>
@@ -58,7 +61,6 @@ const Greeting = (name) => {
     `
 }
 const roverBtns = (rovers) => {
-    console.log(rovers)
     const roverNav = rovers.map(rover => `<button onclick="renderHTML('${rover}')">${rover}</button>`)
     return roverNav.join(' ');
 
@@ -66,40 +68,18 @@ const roverBtns = (rovers) => {
 
 function renderHTML(rover){
     getRoverData(rover)
-   // console.log(state.rover.launch_date)
+   let roverData = store.rovers.image.latest_photos;
+   console.log(`get current rover data`)
+    console.log(roverData);
     document.getElementById('showRover').innerHTML = `
         Rover Name: ${rover}<br>
+        Launch Date: ${roverData[0].rover.launch_date}<br>
+        Landing Date: ${roverData[0].rover.landing_date}<br>
+        Rover Name Test: ${roverData[0].rover.name}
     `
 }
 const currentRover = (rover) => {
 
-}
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
-
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
-    }
 }
 
 // ------------------------------------------------------  API CALLS
@@ -113,9 +93,8 @@ const getImageOfTheDay = (state) => {
         .then(apod => updateStore(store, { apod }))
 }
 const getRoverData = (state) => {
-    let { currentRover } = state
-
-    fetch(`http://localhost:3000/rovers/${currentRover}`)
+    let { rovers } = state
+    fetch(`http://localhost:3000/rovers/${state}`)
         .then(res => res.json())
         .then(rovers => updateStore(store, { rovers }))
 }
