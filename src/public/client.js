@@ -1,7 +1,5 @@
 let store = {
-    //user: { name: "Katrina" },
-    //apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
     data: '',
 }
 
@@ -57,18 +55,24 @@ const roverBtns = (rovers) => {
 
 
 }
+const showImages = (roverData) =>{
+    let images = roverData.map(image => {
+        return `<img src="${image.img_src}">`
+    })
+    return images.join('')
+}
 const RenderHTML = (state) => {
     let { data } = state
     if (data) {
         let roverData = state.data.image.latest_photos
-        console.log(roverData)
         return `
         <p><b>Rover Name:</b> ${roverData[0].rover.name}</p>
         <p><b>Launch Date:</b> ${roverData[0].rover.launch_date}</p>
         <p><b>Landing Date:</b> ${roverData[0].rover.landing_date}</p>
         <p><b>Status:</b> ${roverData[0].rover.status}</p>
         <p><b>Date of most recent photo:</b> ${roverData[0].earth_date}</p>
-        <p><b>Latest Image:</b> <img src=${roverData[0].img_src}></p>
+        <p><b>Latest Images:</b><p>
+        <div>${showImages(roverData)}</div>
     `
     }
     else
