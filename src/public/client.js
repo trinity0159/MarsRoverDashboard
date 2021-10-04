@@ -1,18 +1,15 @@
 let store = {
-    user: { name: "Katrina" },
-    apod: '',
+    //user: { name: "Katrina" },
+    //apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-    selectedRover: 'Curiosity',
+    data: '',
 }
-//const roverNames = store.rovers
 
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
-    console.log('test update store')
-    console.log(store)
     render(root, store)
 }
 
@@ -20,22 +17,24 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
-console.log(rovers);
+
+    let { rovers} = state
+
     return `
         <header></header>
         <main>
             <h1>Mars Rover Dashboard</h1>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Choose a rover below:</h3>
+            <section class="btns">
                 ${roverBtns(rovers)}
-            <section id="showRover">
-            
-            </section>
+             </section>
+           
+            <div id="showRover">
+            ${RenderHTML(state)}
+            </div>
+                    
+
         </main>
         <footer></footer>
     `
@@ -49,52 +48,38 @@ window.addEventListener('load', () => {
 // ------------------------------------------------------  COMPONENTS
 
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
 
-    return `
-        <h1>Hello!</h1>
-    `
-}
 const roverBtns = (rovers) => {
-    const roverNav = rovers.map(rover => `<button onclick="renderHTML('${rover}')">${rover}</button>`)
-    return roverNav.join(' ');
+    const roverNav = rovers.map(rover => {
+        return `<button onclick="getRoverData('${rover}')">${rover}</button>`
+    })
+    return roverNav.join(' ')
+
 
 }
-
-function renderHTML(rover){
-    getRoverData(rover)
-   let roverData = store.rovers.image.latest_photos;
-   console.log(`get current rover data`)
-    console.log(roverData);
-    document.getElementById('showRover').innerHTML = `
-        Rover Name: ${rover}<br>
-        Launch Date: ${roverData[0].rover.launch_date}<br>
-        Landing Date: ${roverData[0].rover.landing_date}<br>
-        Rover Name Test: ${roverData[0].rover.name}
+const RenderHTML = (state) => {
+    let { data } = state
+    if (data) {
+        let roverData = state.data.image.latest_photos
+        console.log(roverData)
+        return `
+        <p><b>Rover Name:</b> ${roverData[0].rover.name}</p>
+        <p><b>Launch Date:</b> ${roverData[0].rover.launch_date}</p>
+        <p><b>Landing Date:</b> ${roverData[0].rover.landing_date}</p>
+        <p><b>Status:</b> ${roverData[0].rover.status}</p>
+        <p><b>Date of most recent photo:</b> ${roverData[0].earth_date}</p>
+        <p><b>Latest Image:</b> <img src=${roverData[0].img_src}></p>
     `
-}
-const currentRover = (rover) => {
-
+    }
+    else
+        return '<p>Please choose a rover</p>'
 }
 
 // ------------------------------------------------------  API CALLS
 
-// Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
+const getRoverData = (rovers) => {
 
-    fetch(`http://localhost:3000/apod`)
+    fetch(`http://localhost:3000/rovers/${rovers}`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-}
-const getRoverData = (state) => {
-    let { rovers } = state
-    fetch(`http://localhost:3000/rovers/${state}`)
-        .then(res => res.json())
-        .then(rovers => updateStore(store, { rovers }))
+        .then(data => updateStore(store, { data } ))
 }

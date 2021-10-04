@@ -15,7 +15,32 @@ main {
   flex: 1;
   padding: 20px;
 }
-
+h1{
+  background-color: #1d3557;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 0;
+}
+button{
+  border: 0;
+  padding: 10px 20px;
+  background-color: #457b9d;
+  font-weight: bold;
+  font-size: 16px;
+  color: #ffffff;
+  margin: 10px 5px;
+  width: 200px;
+}
+.btns {
+  text-align:center;
+}
+#showRover{
+  text-align:-webkit-center;
+}
+#showRover img{
+  width:200px;
+  height:auto;
+}
 footer {
   /* footer styles */
 }
